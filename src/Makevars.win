@@ -1,0 +1,3 @@
+# Windows: loading goes through LoadLibraryW/GetProcAddress; nothing to link.
+PKG_CFLAGS =
+PKG_LIBS =

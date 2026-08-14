@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Rproj
+src/*.o
+src/*.so
+src/*.dll
+inst/doc
+/libs/
+.hegel/
+docs/
+*.Rproj
+*.Rcheck/
+*.tar.gz

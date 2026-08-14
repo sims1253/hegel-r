@@ -1,0 +1,62 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest, r: "release"}
+          - {os: ubuntu-latest, r: "devel", http-user-agent: "release"}
+          - {os: macos-latest, r: "release"}
+          - {os: windows-latest, r: "release"}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          needs: check
+
+      # The engine is loaded at runtime, never linked at install time, so the
+      # package installs without it. Installing the package first lets the
+      # next step download libhegel into hegelr's cache directory, which
+      # R CMD check then picks up.
+      - name: Install package
+        run: R CMD INSTALL .
+
+      # libhegel publishing may lag behind package changes, and a platform
+      # may not have a published artifact at all; when this step fails, the
+      # online tests skip gracefully and only the offline suite runs.
+      - name: Install libhegel engine
+        run: Rscript -e 'try(hegelr::hegel_install())'
+        continue-on-error: true
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          error-on: '"error"'

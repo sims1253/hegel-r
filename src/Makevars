@@ -1,0 +1,5 @@
+# hegelr compiles against no external library: the engine is dlopen()ed at
+# runtime (see hegel_loader.c). -ldl resolves dlopen/dlsym on Linux and is a
+# harmless no-op stub on macOS.
+PKG_CFLAGS =
+PKG_LIBS = -ldl

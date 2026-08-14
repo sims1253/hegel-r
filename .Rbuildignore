@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^\.git.*
+^ARCHITECTURE\.md$
+^AGENTS\.md$
+^\.github$
+^codecov\.yml$
+^cran-comments\.md$
+^\.Rprofile$
+^tools$

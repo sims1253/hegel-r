@@ -1,0 +1,27 @@
+Package: hegelr
+Type: Package
+Title: Property-Based Testing in R, Powered by Hegel
+Version: 0.1.0
+Authors@R: 
+    person("Maximilian", "Scholz", email = "dev.scholz@mailbox.org", role = c("aut", "cre"))
+Description: Provides property-based testing for R, powered by the native
+    Hegel engine (libhegel, the Rust core from hegeldev/hegel-rust). It
+    adds Hypothesis-style integrated shrinking, a persistent example
+    database, and composable generators, and integrates directly with
+    testthat. Property bodies are ordinary R closures that draw values with
+    tc$draw(), assume preconditions with tc$assume(), and fail with
+    stop(), stopifnot(), or testthat expectations. The engine handles
+    generation, shrinking, and replay. The engine library is loaded at
+    runtime, never linked at install time: run hegelr::hegel_install()
+    once or point HEGEL_LIBHEGEL_PATH at a local build.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://github.com/sims1253/hegel-r
+BugReports: https://github.com/sims1253/hegel-r/issues
+Depends: R (>= 4.1.0)
+Suggests: testthat (>= 3.2.0), jsonlite
+SystemRequirements: libhegel 0.32.x, loaded at runtime; run
+    hegelr::hegel_install() or set HEGEL_LIBHEGEL_PATH
+Config/testthat/edition: 3
