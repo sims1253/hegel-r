@@ -1,0 +1,73 @@
+url: https://sims1253.github.io/hegel-r
+
+template:
+  bootstrap: 5
+
+# pkgdown renders every top-level .md file as a site page; ARCHITECTURE.md
+# documents the binding contract, so it gets a navbar link. AGENTS.md is
+# rendered too but left unlinked (pkgdown 2.2 has no exclude option).
+navbar:
+  structure:
+    left: [intro, reference, articles, news, architecture]
+    right: [github]
+  components:
+    architecture:
+      text: Architecture
+      href: ARCHITECTURE.html
+
+reference:
+  - title: Running properties
+    contents:
+      - hegel_test
+      - hegel_reproduce
+
+  - title: Generators
+    subtitle: Primitive values
+    contents:
+      - g_integers
+      - g_doubles
+      - g_logicals
+      - g_characters
+      - g_raw
+      - g_text
+      - g_vectors
+      - g_lists
+      - g_tuple
+
+  - title: Generators
+    subtitle: Internet domains
+    contents:
+      - g_emails
+      - g_urls
+      - g_domains
+      - g_from_regex
+
+  - title: Generators
+    subtitle: Composition and refinement
+    contents:
+      - g_map
+      - g_filter
+      - g_just
+      - g_sampled_from
+      - g_one_of
+
+  - title: Engine management
+    desc: >
+      The libhegel engine is loaded at runtime, never linked at install
+      time. These helpers install, locate, and load it.
+    contents:
+      - hegel_install
+      - hegel_load
+      - hegel_version
+      - hegel_library_available
+      - hegel_library_path
+
+  - title: Cached string generators
+    subtitle: Internal machinery
+    contents:
+      - hegelr_stringgen
+      - hegelr_cache_context
+
+  - title: Package
+    contents:
+      - hegelr-package
