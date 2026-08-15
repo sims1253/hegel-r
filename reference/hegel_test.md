@@ -14,6 +14,9 @@ taking one argument: the test case object `tc`. Inside the body:
 
 - `tc$note(msg)` records a message shown only in the failure report.
 
+- `tc$target(value, label = NULL)` reports a targeting score for the
+  engine's target phase, guiding generation toward larger scores.
+
 - [`stop()`](https://rdrr.io/r/base/stop.html),
   [`stopifnot()`](https://rdrr.io/r/base/stopifnot.html) and testthat
   expectations fail the case.

@@ -1,8 +1,7 @@
 # Resolve the path of the libhegel engine library
 
 `hegel_library_path()` locates the native libhegel engine without
-loading it. Candidates are tried in this order (ARCHITECTURE.md section
-3):
+loading it. Candidates are tried in this order:
 
 1.  The `HEGEL_LIBHEGEL_PATH` environment variable, when it points at an
     existing file.

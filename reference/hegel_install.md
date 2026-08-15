@@ -13,7 +13,10 @@ skipped with a message on older R).
 
 This function needs the *jsonlite* package (a soft dependency) to read
 the GitHub API response, and network access. The GitHub API requires a
-`User-Agent` header; hegel_install() sends it on every request.
+`User-Agent` header; hegel_install() sends it on every request. When the
+`GITHUB_PAT` or `GITHUB_TOKEN` environment variable is set, its value is
+sent as a bearer token, raising the API rate limit above the 60
+unauthenticated requests/hour.
 
 ## Usage
 

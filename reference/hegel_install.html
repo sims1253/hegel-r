@@ -11,7 +11,10 @@ asset, the download is verified against it (requires R &amp;gt;= 4.5; skipped
 with a message on older R).
 This function needs the jsonlite package (a soft dependency) to read
 the GitHub API response, and network access. The GitHub API requires a
-User-Agent header; hegel_install() sends it on every request.'><meta property="og:description" content='Downloads the prebuilt libhegel engine library (a single
+User-Agent header; hegel_install() sends it on every request. When the
+GITHUB_PAT or GITHUB_TOKEN environment variable is set, its value is
+sent as a bearer token, raising the API rate limit above the 60
+unauthenticated requests/hour.'><meta property="og:description" content='Downloads the prebuilt libhegel engine library (a single
 file such as libhegel-windows-amd64.dll) from the Hegel releases on
 GitHub
 (https://github.com/hegeldev/hegel-rust/releases) into
@@ -23,7 +26,10 @@ asset, the download is verified against it (requires R &amp;gt;= 4.5; skipped
 with a message on older R).
 This function needs the jsonlite package (a soft dependency) to read
 the GitHub API response, and network access. The GitHub API requires a
-User-Agent header; hegel_install() sends it on every request.'></head><body>
+User-Agent header; hegel_install() sends it on every request. When the
+GITHUB_PAT or GITHUB_TOKEN environment variable is set, its value is
+sent as a bearer token, raising the API rate limit above the 60
+unauthenticated requests/hour.'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -41,8 +47,9 @@ User-Agent header; hegel_install() sends it on every request.'></head><body>
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
-<li class="nav-item"><a class="nav-link" href="../ARCHITECTURE.html">Architecture</a></li>
-      </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/sims1253/hegel-r/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/sims1253/hegel-r/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -69,7 +76,10 @@ asset, the download is verified against it (requires R &gt;= 4.5; skipped
 with a message on older R).</p>
 <p>This function needs the <em>jsonlite</em> package (a soft dependency) to read
 the GitHub API response, and network access. The GitHub API requires a
-<code>User-Agent</code> header; hegel_install() sends it on every request.</p>
+<code>User-Agent</code> header; hegel_install() sends it on every request. When the
+<code>GITHUB_PAT</code> or <code>GITHUB_TOKEN</code> environment variable is set, its value is
+sent as a bearer token, raising the API rate limit above the 60
+unauthenticated requests/hour.</p>
     </div>
 
     <div class="section level2">

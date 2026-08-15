@@ -91,8 +91,8 @@ g_text(max_size = 8)
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x55ae293e6e10>
-#> <environment: 0x55ae27648008>
+#> <bytecode: 0x56097064b678>
+#> <environment: 0x560970d1ad68>
 #> 
 #> $label
 #> [1] "g_text(min_size = 0, max_size = 8)"
@@ -114,8 +114,8 @@ g_text(alphabet = "abc")
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x55ae293e6e10>
-#> <environment: 0x55ae2757b8c8>
+#> <bytecode: 0x56097064b678>
+#> <environment: 0x560970d961e0>
 #> 
 #> $label
 #> [1] "g_text(min_size = 0, max_size = Inf)"
