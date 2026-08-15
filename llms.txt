@@ -1,0 +1,215 @@
+# Hegel for R
+
+> \[!IMPORTANT\] We’re excited you’re checking out Hegel! Hegel is in
+> beta, and we’d love for you to try it and [report any
+> feedback](https://github.com/sims1253/hegel-r/issues).
+>
+> As part of our beta, we may make breaking changes if it makes Hegel a
+> better property-based testing library. If that instability bothers
+> you, please check back in a few months for a stable release!
+>
+> See <https://hegel.dev/compatibility> for more details.
+
+- [Hegel website](https://hegel.dev)
+
+hegelr is a property-based testing library for R. Hegel is based on
+[Hypothesis](https://github.com/hypothesisworks/hypothesis), using the
+[Hegel protocol](https://hegel.dev/).
+
+## Installation
+
+Install the development version from GitHub with:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("sims1253/hegel-r")
+```
+
+### Engine setup
+
+hegelr drives [libhegel](https://github.com/hegeldev/hegel-rust), the
+native Rust engine. The engine is never linked at install time; it is
+loaded at runtime. Run
+
+``` r
+
+hegelr::hegel_install()
+```
+
+once to download the published engine — a single prebuilt library file
+(e.g. `libhegel-windows-amd64.dll`, with sha256 verification) — from the
+[hegeldev/hegel-rust
+releases](https://github.com/hegeldev/hegel-rust/releases) into hegelr’s
+cache directory.
+
+To use a local build instead (for example one built with cargo from a
+hegel-rust checkout), point `HEGEL_LIBHEGEL_PATH` at the library:
+
+``` r
+
+Sys.setenv(HEGEL_LIBHEGEL_PATH = "/path/to/libhegel.so")
+```
+
+libhegel 0.32.x is required; hegelr checks the engine version on load. R
+4.1.0 or newer is required, and there are no hard R package
+dependencies.
+
+## Quickstart
+
+Here’s a quick example of how to write a Hegel test:
+
+``` r
+
+library(testthat)
+library(hegelr)
+
+my_sort <- function(x) {
+  sorted <- sort(x)
+  sorted[!duplicated(sorted)] # drops duplicates: a bug!
+}
+
+test_that("my_sort matches the reference sort", {
+  hegel_test(function(tc) {
+    x <- tc$draw(g_vectors(g_integers()))
+    stopifnot(identical(my_sort(x), sort(x)))
+  })
+})
+```
+
+This test will fail when run with `devtools::test()` (or under
+`R CMD check`)! Hegel will produce a minimal failing test case for us:
+
+      draw_1 <- c(0, 0)
+    Reproduce with: hegel_reproduce("AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ==", property)
+    identical(my_sort(x), sort(x)) is not TRUE
+
+Hegel reports the minimal example showing that our sort is incorrectly
+dropping duplicates. If we remove the `sorted[!duplicated(sorted)]` line
+from `my_sort()`, this test will then pass (because it’s just comparing
+the standard sort against itself).
+
+The `Reproduce with:` line replays the saved failing example without a
+full run: pass the blob and the property to
+[`hegel_reproduce()`](https://sims1253.github.io/hegel-r/reference/hegel_reproduce.md).
+
+``` r
+
+hegel_reproduce("AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ==", function(tc) {
+  x <- tc$draw(g_vectors(g_integers()))
+  stopifnot(identical(my_sort(x), sort(x)))
+})
+```
+
+## Status
+
+hegelr is a developer preview. Supported platforms are those with a
+published libhegel artifact: Linux amd64/arm64, macOS arm64 (Apple
+Silicon), and Windows amd64/arm64.
+
+hegelr requires R 4.1.0 or newer; the only system requirement is the
+libhegel engine, loaded at runtime.
+
+## Contributing
+
+Issues and pull requests are welcome at
+[sims1253/hegel-r](https://github.com/sims1253/hegel-r). See
+<https://hegel.dev> for more about the Hegel family of property-based
+testing libraries.
+
+## License
+
+[MIT](https://sims1253.github.io/hegel-r/LICENSE.md) © Maximilian Scholz
+and hegelr contributors
+
+# Package index
+
+## Running properties
+
+- [`hegel_test()`](https://sims1253.github.io/hegel-r/reference/hegel_test.md)
+  : Run a property-based test
+- [`hegel_reproduce()`](https://sims1253.github.io/hegel-r/reference/hegel_reproduce.md)
+  : Replay a stored counterexample
+
+## Generators
+
+### Primitive values
+
+- [`g_integers()`](https://sims1253.github.io/hegel-r/reference/g_integers.md)
+  : Generate integers
+- [`g_doubles()`](https://sims1253.github.io/hegel-r/reference/g_doubles.md)
+  : Generate doubles
+- [`g_logicals()`](https://sims1253.github.io/hegel-r/reference/g_logicals.md)
+  : Generate logicals
+- [`g_characters()`](https://sims1253.github.io/hegel-r/reference/g_characters.md)
+  : Generate single characters
+- [`g_raw()`](https://sims1253.github.io/hegel-r/reference/g_raw.md) :
+  Generate raw byte vectors
+- [`g_text()`](https://sims1253.github.io/hegel-r/reference/g_text.md) :
+  Generate text strings
+- [`g_vectors()`](https://sims1253.github.io/hegel-r/reference/g_vectors.md)
+  : Generate atomic vectors
+- [`g_lists()`](https://sims1253.github.io/hegel-r/reference/g_lists.md)
+  : Generate lists
+- [`g_tuple()`](https://sims1253.github.io/hegel-r/reference/g_tuple.md)
+  : Generate tuples
+
+## Generators
+
+### Internet domains
+
+- [`g_emails()`](https://sims1253.github.io/hegel-r/reference/g_emails.md)
+  : Generate email addresses
+- [`g_urls()`](https://sims1253.github.io/hegel-r/reference/g_urls.md) :
+  Generate URLs
+- [`g_domains()`](https://sims1253.github.io/hegel-r/reference/g_domains.md)
+  : Generate domain names
+- [`g_from_regex()`](https://sims1253.github.io/hegel-r/reference/g_from_regex.md)
+  : Generate strings matching a regular expression
+
+## Generators
+
+### Composition and refinement
+
+- [`g_map()`](https://sims1253.github.io/hegel-r/reference/g_map.md) :
+  Transform a generator's output
+- [`g_filter()`](https://sims1253.github.io/hegel-r/reference/g_filter.md)
+  : Filter a generator's output
+- [`g_just()`](https://sims1253.github.io/hegel-r/reference/g_just.md) :
+  Generate a constant
+- [`g_sampled_from()`](https://sims1253.github.io/hegel-r/reference/g_sampled_from.md)
+  : Generate one of a fixed set of values
+- [`g_one_of()`](https://sims1253.github.io/hegel-r/reference/g_one_of.md)
+  : Generate a choice among generators
+
+## Engine management
+
+The libhegel engine is loaded at runtime, never linked at install time.
+These helpers install, locate, and load it.
+
+- [`hegel_install()`](https://sims1253.github.io/hegel-r/reference/hegel_install.md)
+  : Install the libhegel engine
+- [`hegel_load()`](https://sims1253.github.io/hegel-r/reference/hegel_load.md)
+  : Load the libhegel engine
+- [`hegel_version()`](https://sims1253.github.io/hegel-r/reference/hegel_version.md)
+  : Report the libhegel engine version
+- [`hegel_library_available()`](https://sims1253.github.io/hegel-r/reference/hegel_library_available.md)
+  : Check whether the libhegel engine can be loaded
+- [`hegel_library_path()`](https://sims1253.github.io/hegel-r/reference/hegel_library_path.md)
+  : Resolve the path of the libhegel engine library
+
+## Cached string generators
+
+### Internal machinery
+
+- [`hegelr_stringgen()`](https://sims1253.github.io/hegel-r/reference/hegelr_stringgen.md)
+  : Get-or-create a cached string generator
+- [`hegelr_cache_context()`](https://sims1253.github.io/hegel-r/reference/hegelr_cache_context.md)
+  : Process-lifetime engine context for cached string generators
+
+## Package
+
+- [`hegelr`](https://sims1253.github.io/hegel-r/reference/hegelr-package.md)
+  [`hegelr-package`](https://sims1253.github.io/hegel-r/reference/hegelr-package.md)
+  : hegelr: Property-Based Testing in R, Powered by Hegel
+
