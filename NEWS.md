@@ -1,3 +1,21 @@
+# hegelr (unreleased)
+
+### Changed
+
+- `hegel_install()` sends the `GITHUB_PAT` or `GITHUB_TOKEN` environment
+  variable as a bearer token when set, raising the GitHub API rate limit
+  above the 60 unauthenticated requests per hour.
+- Errors raised by the compiled shim carry a distinctive
+  `hegelr shim C_hegelr_*:` message prefix instead of the bare wrapper
+  name, so a property whose own error message happens to start with
+  `C_hegelr_` can no longer be mistaken for a shim failure.
+- `tc$target()` is now documented on `hegel_test()`.
+
+### Internal
+
+- Removed the internal `ARCHITECTURE.md` and `AGENTS.md` design notes;
+  code comments no longer reference them.
+
 # hegelr 0.1.0
 
 First release: property-based testing for R, powered by the native Hegel

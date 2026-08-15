@@ -13,8 +13,7 @@ succeed via the OS loader).
 }
 \description{
 \code{hegel_library_path()} locates the native libhegel engine
-without loading it. Candidates are tried in this order
-(ARCHITECTURE.md section 3):
+without loading it. Candidates are tried in this order:
 \enumerate{
 \item The \code{HEGEL_LIBHEGEL_PATH} environment variable, when it points at an
 existing file.

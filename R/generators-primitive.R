@@ -1,18 +1,17 @@
-# Primitive generators (ARCHITECTURE.md section 5 table) plus the shared
+# Primitive generators plus the shared
 # validation / status / label helpers used by every generator file.
 #
 # The generator descriptor protocol (draw / label / empty) is documented on
 # hegelr_generator() below.
 
 # Integers cross the C boundary as R doubles restricted to the u64-safe
-# subset: whole numbers with absolute value <= 2^53 (ARCHITECTURE.md
-# section 4). Also used as the "no upper bound" sentinel for collection
-# sizes.
+# subset: whole numbers with absolute value <= 2^53. Also used as the
+# "no upper bound" sentinel for collection sizes.
 hegelr_max_integer <- 2^53
 
 # --- status translation -------------------------------------------------
 
-# Translate a draw result's status field per ARCHITECTURE.md section 5:
+# Translate a draw result's status field:
 # 0 -> return the value; -1 -> signal hegelr_stop_test (case OVERRUN);
 # -2 -> signal hegelr_assume (case INVALID). Other codes never reach R (the
 # shim raises them as errors directly), so hitting the default is a bug.

@@ -27,7 +27,10 @@ with a message on older R).
 
 This function needs the \emph{jsonlite} package (a soft dependency) to read
 the GitHub API response, and network access. The GitHub API requires a
-\code{User-Agent} header; hegel_install() sends it on every request.
+\code{User-Agent} header; hegel_install() sends it on every request. When the
+\code{GITHUB_PAT} or \code{GITHUB_TOKEN} environment variable is set, its value is
+sent as a bearer token, raising the API rate limit above the 60
+unauthenticated requests/hour.
 }
 \examples{
 \donttest{

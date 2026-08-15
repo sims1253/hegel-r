@@ -1,4 +1,4 @@
-# Composite generators (ARCHITECTURE.md section 5 table). Compound
+# Composite generators. Compound
 # structures are wrapped in labeled spans so the engine's shrinker knows
 # what it is shrinking (hegel_label_t values, mirrored below as private
 # constants).

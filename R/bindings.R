@@ -1,7 +1,7 @@
 # Internal thin wrappers over the native shim. --------------------------------
 #
-# These mirror, one-to-one, the wrapper table in section 4 of
-# ARCHITECTURE.md: for every registered `C_hegelr_*` symbol there is
+# These mirror, one-to-one, the registered wrappers in src/init.c: for
+# every registered `C_hegelr_*` symbol there is
 # exactly one `hegelr_*` function below with the same short name, a bare
 # `.Call()`, and no logic of its own. Argument validation, status-code
 # translation, span bookkeeping and handle lifetime all live in the R
@@ -244,7 +244,7 @@ hegelr_cache_context <- function() {
 
 #' Get-or-create a cached string generator
 #'
-#' String generators are immutable and shareable (ARCHITECTURE.md section 4),
+#' String generators are immutable and shareable,
 #' so they are created once per schema and cached in `hegelr_env` for the
 #' process lifetime. `schema_key` is a deparse digest of the schema;
 #' `builder` is a closure `function(ctx)` calling the appropriate

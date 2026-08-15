@@ -31,6 +31,33 @@ test_that("hegel_library_path() honors HEGEL_LIBHEGEL_PATH when the file exists"
   expect_false(identical(resolved, file.path(dir, "does-not-exist.so")))
 })
 
+test_that("the cache scan prefers the highest installed version", {
+  pkg_env <- hegelr:::hegelr_env
+  saved <- pkg_env$lib_path
+  on.exit(pkg_env$lib_path <- saved, add = TRUE)
+
+  # Redirect tools::R_user_dir()'s cache root for the scan.
+  cache <- file.path(tempdir(), "hegelr-cache-scan")
+  dir.create(cache, recursive = TRUE, showWarnings = FALSE)
+  on.exit(unlink(cache, recursive = TRUE, force = TRUE), add = TRUE)
+  local_envvar_(R_USER_CACHE_DIR = cache)
+
+  lib_name <- if (.Platform$OS.type == "windows") "hegel.dll" else "libhegel.so"
+  # 0.9.2 sorts above 0.32.x as a plain string; the scan must not fall for
+  # that (0.32.10 is the highest install here, not 0.9.2). R_user_dir()
+  # nests the package under an "R" directory inside the cache root.
+  for (v in c("0.32.1", "0.32.10", "0.9.2")) {
+    dir <- file.path(cache, "R", "hegelr", "libhegel", v)
+    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+    file.create(file.path(dir, lib_name))
+  }
+  pkg_env$lib_path <- NULL
+  expect_identical(
+    hegelr::hegel_library_path(),
+    file.path(cache, "R", "hegelr", "libhegel", "0.32.10", lib_name)
+  )
+})
+
 test_that("g_integers() rejects an empty range", {
   expect_error(g_integers(min = 10, max = -10), "min|max")
 })
@@ -222,6 +249,28 @@ test_that("canonical library names match the resolution pattern", {
       hegelr:::hegelr_canonical_lib_name(n)
     ))
   }
+})
+
+test_that("GitHub headers carry a bearer token when one is set", {
+  headers <- hegelr:::hegelr_github_headers()
+  expect_false("Authorization" %in% names(headers))
+  expect_identical(headers[["User-Agent"]], "hegelr (R package)")
+
+  local_envvar_(GITHUB_PAT = "secret-token")
+  headers <- hegelr:::hegelr_github_headers()
+  expect_identical(headers[["Authorization"]], "Bearer secret-token")
+
+  # GITHUB_PAT wins when both are set; GITHUB_TOKEN applies alone.
+  local_envvar_(GITHUB_TOKEN = "other-token")
+  expect_identical(
+    hegelr:::hegelr_github_headers()[["Authorization"]],
+    "Bearer secret-token"
+  )
+  local_envvar_(GITHUB_PAT = NA)
+  expect_identical(
+    hegelr:::hegelr_github_headers()[["Authorization"]],
+    "Bearer other-token"
+  )
 })
 
 test_that("phase and health-check names map to engine bitmasks", {

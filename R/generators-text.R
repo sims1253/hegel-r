@@ -1,4 +1,4 @@
-# Text generators (ARCHITECTURE.md section 5 table). All are backed by
+# Text generators. All are backed by
 # engine string generators: immutable, shareable handles cached per schema
 # for the process lifetime via hegelr_stringgen() (bindings.R). The handles
 # are constructed against the dedicated cache context, never a run context.
