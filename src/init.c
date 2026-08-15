@@ -1,8 +1,8 @@
 /*
  * init.c — native routine registration for hegelr: every C_hegelr_*
- * wrapper from the contract table (ARCHITECTURE.md section 4) registered
- * with its exact arity, dynamic symbols disabled so calls resolve through
- * this table only.
+ * wrapper registered with its exact arity (one row per hegelr_* function
+ * in R/bindings.R — keep the two in sync), dynamic symbols disabled so
+ * calls resolve through this table only.
  */
 
 #include <Rinternals.h>

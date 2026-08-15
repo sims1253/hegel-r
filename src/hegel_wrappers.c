@@ -1,6 +1,6 @@
 /*
- * hegel_wrappers.c — the .Call surface: one C_hegelr_* wrapper per row of
- * the contract table in ARCHITECTURE.md section 4. Each wrapper validates
+ * hegel_wrappers.c — the .Call surface: one C_hegelr_* wrapper per entry
+ * registered in src/init.c. Each wrapper validates
  * its arguments, forwards through the hegelr_abi function-pointer table,
  * and either returns the contract value or raises an R error carrying the
  * engine diagnostic. Handles are external pointers tagged with their
@@ -32,7 +32,7 @@
 static void hegelr_require_loaded(const char *who)
 {
     if (!hegelr_is_loaded())
-        Rf_error("%s: libhegel is not loaded; call hegelr::hegel_load() first", who);
+        Rf_error("hegelr shim %s: libhegel is not loaded; call hegelr::hegel_load() first", who);
 }
 
 /* The engine's last diagnostic on ctx, or NULL when unavailable. */
@@ -46,8 +46,8 @@ static const char *hegelr_last_error(hegel_context_t *ctx)
 static void hegelr_error_msg(hegel_result_t code, const char *msg, const char *who)
 {
     if (msg != NULL && msg[0] != '\0')
-        Rf_error("%s: %s (engine code %d)", who, msg, (int) code);
-    Rf_error("%s: libhegel call failed (engine code %d)", who, (int) code);
+        Rf_error("hegelr shim %s: %s (engine code %d)", who, msg, (int) code);
+    Rf_error("hegelr shim %s: libhegel call failed (engine code %d)", who, (int) code);
 }
 
 /* Raise an R error unless the engine call succeeded. */
@@ -79,13 +79,13 @@ static double num_scalar(SEXP x, const char *who, const char *arg)
     if (TYPEOF(x) == INTSXP && Rf_length(x) == 1) {
         int v = INTEGER(x)[0];
         if (v == NA_INTEGER)
-            Rf_error("%s: %s must not be NA", who, arg);
+            Rf_error("hegelr shim %s: %s must not be NA", who, arg);
         return (double) v;
     }
     if (TYPEOF(x) != REALSXP || Rf_length(x) != 1)
-        Rf_error("%s: %s must be a length-1 numeric vector", who, arg);
+        Rf_error("hegelr shim %s: %s must be a length-1 numeric vector", who, arg);
     if (ISNAN(REAL(x)[0]))
-        Rf_error("%s: %s must not be NA", who, arg);
+        Rf_error("hegelr shim %s: %s must not be NA", who, arg);
     return REAL(x)[0];
 }
 
@@ -95,7 +95,7 @@ static int64_t as_i64_checked(SEXP x, const char *who, const char *arg)
 {
     double v = num_scalar(x, who, arg);
     if (v != floor(v) || v < -HEGELR_2P53 || v > HEGELR_2P53)
-        Rf_error("%s: %s must be a whole number with |x| <= 2^53", who, arg);
+        Rf_error("hegelr shim %s: %s must be a whole number with |x| <= 2^53", who, arg);
     return (int64_t) v;
 }
 
@@ -105,7 +105,7 @@ static uint64_t as_u64_checked(SEXP x, const char *who, const char *arg)
 {
     double v = num_scalar(x, who, arg);
     if (v < 0.0 || v != floor(v) || v > HEGELR_2P53)
-        Rf_error("%s: %s must be a whole number in [0, 2^53]", who, arg);
+        Rf_error("hegelr shim %s: %s must be a whole number in [0, 2^53]", who, arg);
     return (uint64_t) v;
 }
 
@@ -113,17 +113,17 @@ static int lgl_scalar(SEXP x, const char *who, const char *arg)
 {
     int v;
     if (TYPEOF(x) != LGLSXP || Rf_length(x) != 1)
-        Rf_error("%s: %s must be a length-1 logical vector", who, arg);
+        Rf_error("hegelr shim %s: %s must be a length-1 logical vector", who, arg);
     v = LOGICAL(x)[0];
     if (v == NA_LOGICAL)
-        Rf_error("%s: %s must not be NA", who, arg);
+        Rf_error("hegelr shim %s: %s must not be NA", who, arg);
     return v;
 }
 
 static const char *str_arg(SEXP x, const char *who, const char *arg)
 {
     if (TYPEOF(x) != STRSXP || Rf_length(x) != 1)
-        Rf_error("%s: %s must be a length-1 character vector", who, arg);
+        Rf_error("hegelr shim %s: %s must be a length-1 character vector", who, arg);
     return Rf_translateCharUTF8(STRING_ELT(x, 0));
 }
 
@@ -139,12 +139,12 @@ static void *handle_ptr(SEXP x, const char *tagname, const char *who, const char
     void *p;
     hegelr_require_loaded(who);
     if (TYPEOF(x) != EXTPTRSXP)
-        Rf_error("%s: %s must be a hegelr handle (external pointer)", who, arg);
+        Rf_error("hegelr shim %s: %s must be a hegelr handle (external pointer)", who, arg);
     if (R_ExternalPtrTag(x) != Rf_install(tagname))
-        Rf_error("%s: %s must be a hegelr '%s' handle", who, arg, tagname);
+        Rf_error("hegelr shim %s: %s must be a hegelr '%s' handle", who, arg, tagname);
     p = R_ExternalPtrAddr(x);
     if (p == NULL)
-        Rf_error("%s: %s is not a valid hegelr handle (already freed?)", who, arg);
+        Rf_error("hegelr shim %s: %s is not a valid hegelr handle (already freed?)", who, arg);
     return p;
 }
 
@@ -205,8 +205,7 @@ HEGELR_FINALIZER(fin_string_generator, hegel_string_generator_t, string_generato
 /* ---------------------------------------------------------------------- */
 
 /* Marked-UTF-8 string of exactly len bytes, truncated at the first
- * embedded NUL (R char data cannot carry interior NULs; documented in
- * ARCHITECTURE.md). */
+ * embedded NUL (R char data cannot carry interior NULs). */
 static SEXP mk_string_utf8_len(const char *buf, size_t len)
 {
     const char *nul;
@@ -267,7 +266,7 @@ static const char *const *chr_vec_to_carray(SEXP x, const char *who, const char 
     if (x == R_NilValue)
         return NULL;
     if (TYPEOF(x) != STRSXP)
-        Rf_error("%s: %s must be a character vector or NULL", who, arg);
+        Rf_error("hegelr shim %s: %s must be a character vector or NULL", who, arg);
     n = Rf_length(x);
     arr = (const char **) R_alloc(n > 0 ? n : 1, sizeof(const char *));
     for (i = 0; i < n; i++)
@@ -301,7 +300,7 @@ SEXP C_hegelr_load(SEXP path)
     const char *cpath;
 
     if (TYPEOF(path) != STRSXP || Rf_length(path) != 1)
-        Rf_error("%s: path must be a length-1 character vector", __func__);
+        Rf_error("hegelr shim %s: path must be a length-1 character vector", __func__);
     cpath = Rf_translateCharUTF8(STRING_ELT(path, 0));
     if (hegelr_load_library(cpath, errbuf, sizeof errbuf) != 0)
         Rf_error("%s", errbuf);
@@ -395,7 +394,7 @@ SEXP C_hegelr_settings_set_verbosity(SEXP ctx_s, SEXP s_s, SEXP v_s)
     int64_t v = as_i64_checked(v_s, __func__, "verbosity");
 
     if (v < 0 || v > 3)
-        Rf_error("%s: verbosity must be one of 0 (quiet), 1 (normal), 2 (verbose), 3 (debug)",
+        Rf_error("hegelr shim %s: verbosity must be one of 0 (quiet), 1 (normal), 2 (verbose), 3 (debug)",
                  __func__);
     hegelr_check(hegelr_abi.settings_set_verbosity(ctx, s, (uint32_t) v), ctx, __func__);
     return Rf_ScalarLogical(1); /* TRUE: R_TrueValue is not public API */
@@ -429,7 +428,7 @@ SEXP C_hegelr_settings_set_mode(SEXP ctx_s, SEXP s_s, SEXP mode_s)
     int64_t mode = as_i64_checked(mode_s, __func__, "mode");
 
     if (mode < 0 || mode > 1)
-        Rf_error("%s: mode must be 0 (test run) or 1 (single test case)", __func__);
+        Rf_error("hegelr shim %s: mode must be 0 (test run) or 1 (single test case)", __func__);
     hegelr_check(hegelr_abi.settings_set_mode(ctx, s, (uint32_t) mode), ctx, __func__);
     return Rf_ScalarLogical(1); /* TRUE: R_TrueValue is not public API */
 }
@@ -441,7 +440,7 @@ SEXP C_hegelr_settings_set_phases(SEXP ctx_s, SEXP s_s, SEXP mask_s)
     uint64_t mask = as_u64_checked(mask_s, __func__, "phases");
 
     if (mask > 31)
-        Rf_error("%s: phases mask must be in [0, 31] (bits 0-4)", __func__);
+        Rf_error("hegelr shim %s: phases mask must be in [0, 31] (bits 0-4)", __func__);
     hegelr_check(hegelr_abi.settings_set_phases(ctx, s, (uint32_t) mask), ctx, __func__);
     return Rf_ScalarLogical(1); /* TRUE: R_TrueValue is not public API */
 }
@@ -453,7 +452,7 @@ SEXP C_hegelr_settings_set_suppress_health_check(SEXP ctx_s, SEXP s_s, SEXP chec
     uint64_t checks = as_u64_checked(checks_s, __func__, "checks");
 
     if (checks > 15)
-        Rf_error("%s: health-check mask must be in [0, 15] (bits 0-3)", __func__);
+        Rf_error("hegelr shim %s: health-check mask must be in [0, 15] (bits 0-3)", __func__);
     hegelr_check(hegelr_abi.settings_set_suppress_health_check(ctx, s, (uint32_t) checks), ctx,
                  __func__);
     return Rf_ScalarLogical(1); /* TRUE: R_TrueValue is not public API */
@@ -503,7 +502,7 @@ SEXP C_hegelr_mark_complete(SEXP ctx_s, SEXP tc_s, SEXP status_s, SEXP origin_s)
     const char *origin = NULL;
 
     if (status < HEGEL_STATUS_VALID || status > HEGEL_STATUS_INTERESTING)
-        Rf_error("%s: status must be one of 0 (VALID), 1 (INVALID), 2 (OVERRUN), 3 (INTERESTING)",
+        Rf_error("hegelr shim %s: status must be one of 0 (VALID), 1 (INVALID), 2 (OVERRUN), 3 (INTERESTING)",
                  __func__);
     /* The engine reads origin only for INTERESTING outcomes. */
     if (status == HEGEL_STATUS_INTERESTING)
@@ -650,7 +649,7 @@ SEXP C_hegelr_new_collection(SEXP ctx_s, SEXP tc_s, SEXP min_s, SEXP max_s)
     hegel_collection_t *coll = NULL;
 
     if (min_size > max_size)
-        Rf_error("%s: min must be <= max", __func__);
+        Rf_error("hegelr shim %s: min must be <= max", __func__);
     hegelr_check(hegelr_abi.new_collection(ctx, tc, min_size, max_size, &coll), ctx, __func__);
     return mk_handle(Rf_install("hegelr_collection"), coll, ctx_s, fin_collection);
 }
@@ -697,7 +696,7 @@ SEXP C_hegelr_generate_boolean(SEXP ctx_s, SEXP tc_s, SEXP p_s)
     SEXP value, ans;
 
     if (p < 0.0 || p > 1.0)
-        Rf_error("%s: p must be a probability in [0, 1]", __func__);
+        Rf_error("hegelr shim %s: p must be a probability in [0, 1]", __func__);
     status = draw_status(hegelr_abi.generate_boolean(ctx, tc, p, false, false, &out),
                          ctx, __func__);
     value = PROTECT(status == HEGEL_OK ? Rf_ScalarLogical(out != 0) : R_NilValue);
@@ -717,7 +716,7 @@ SEXP C_hegelr_generate_integer(SEXP ctx_s, SEXP tc_s, SEXP min_s, SEXP max_s)
     SEXP value, ans;
 
     if (min_value > max_value)
-        Rf_error("%s: min must be <= max", __func__);
+        Rf_error("hegelr shim %s: min must be <= max", __func__);
     status = draw_status(hegelr_abi.generate_integer(ctx, tc, min_value, max_value, &out),
                          ctx, __func__);
     /* Integer-ish values cross to R as doubles (contract: whole doubles). */
@@ -746,9 +745,9 @@ SEXP C_hegelr_generate_float(SEXP ctx_s, SEXP tc_s, SEXP min_s, SEXP max_s,
     SEXP value, ans;
 
     if (min_value > max_value)
-        Rf_error("%s: min must be <= max", __func__);
+        Rf_error("hegelr shim %s: min must be <= max", __func__);
     if (!(smallest > 0.0) || !R_FINITE(smallest))
-        Rf_error("%s: smallest_nonzero must be a positive finite double", __func__);
+        Rf_error("hegelr shim %s: smallest_nonzero must be a positive finite double", __func__);
     status = draw_status(hegelr_abi.generate_float(ctx, tc, 64,
                                                    min_value, max_value,
                                                    allow_nan, allow_infinity,
@@ -772,7 +771,7 @@ SEXP C_hegelr_generate_bytes(SEXP ctx_s, SEXP tc_s, SEXP min_s, SEXP max_s)
     SEXP value, ans;
 
     if (min_size > max_size)
-        Rf_error("%s: min must be <= max", __func__);
+        Rf_error("hegelr shim %s: min must be <= max", __func__);
     status = draw_status(hegelr_abi.generate_bytes(ctx, tc, min_size, max_size, &res),
                          ctx, __func__);
     if (status == HEGEL_OK) {
@@ -812,11 +811,11 @@ SEXP C_hegelr_string_generator_text(SEXP ctx_s, SEXP min_s, SEXP max_s, SEXP cod
     hegel_string_generator_t *gen = NULL;
 
     if (min_size > max_size)
-        Rf_error("%s: min must be <= max", __func__);
+        Rf_error("hegelr shim %s: min must be <= max", __func__);
     if (min_cp > 0xFFFFFFFFULL || max_cp > 0xFFFFFFFFULL)
-        Rf_error("%s: codepoints must be in [0, 2^32-1]", __func__);
+        Rf_error("hegelr shim %s: codepoints must be in [0, 2^32-1]", __func__);
     if (min_cp > max_cp)
-        Rf_error("%s: min_codepoint must be <= max_codepoint", __func__);
+        Rf_error("hegelr shim %s: min_codepoint must be <= max_codepoint", __func__);
 
     categories = chr_vec_to_carray(categories_s, __func__, "categories", &categories_len);
     exclude_categories = chr_vec_to_carray(exclude_categories_s, __func__,

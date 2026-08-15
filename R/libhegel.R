@@ -1,5 +1,5 @@
 # Engine library resolution, loading, version gating and installation.
-# See ARCHITECTURE.md section 3 for the resolution contract.
+# The resolution order is documented on hegel_library_path().
 
 # The oldest libhegel ABI hegelr can drive. Loading an older engine is an
 # error (the shim resolves symbols that may not exist there).
@@ -31,8 +31,7 @@ hegelr_bare_library_name <- function() {
 #' @title Resolve the path of the libhegel engine library
 #'
 #' @description `hegel_library_path()` locates the native libhegel engine
-#'   without loading it. Candidates are tried in this order
-#'   (ARCHITECTURE.md section 3):
+#'   without loading it. Candidates are tried in this order:
 #'
 #' 1. The `HEGEL_LIBHEGEL_PATH` environment variable, when it points at an
 #'    existing file.
@@ -85,21 +84,14 @@ hegel_library_path <- function() {
     if (any(ok)) {
       candidates <- versions[ok]
       vers <- parsed[ok]
-      # numeric_version objects are neither atomic nor sortable as a list,
-      # so order them by pairwise comparison (selection sort, highest
-      # first); the number of installed versions is tiny.
-      remaining <- seq_along(candidates)
-      ordered <- integer(0)
-      while (length(remaining)) {
-        best <- remaining[[1L]]
-        for (i in remaining[-1L]) {
-          if (vers[[i]] > vers[[best]]) {
-            best <- i
-          }
-        }
-        ordered <- c(ordered, best)
-        remaining <- setdiff(remaining, best)
-      }
+      # numeric_version objects are not sortable as a vector; a zero-padded
+      # component key sorts lexicographically the same as numerically, so
+      # plain order() ranks the installs highest-first. (Unpadded strings
+      # would rank 0.9.x above 0.10.x.)
+      key <- vapply(vers, function(v) {
+        paste(sprintf("%06d", unclass(v)[[1L]]), collapse = ".")
+      }, character(1))
+      ordered <- order(key, decreasing = TRUE)
       for (dir in file.path(root, candidates[ordered])) {
         # Marker file first: hegel_install() writes installed.rds next to
         # the dll so nested layouts resolve without a recursive scan.
@@ -268,10 +260,19 @@ hegel_library_available <- function() {
 
 # --- hegel_install() helpers ------------------------------------------------
 
-# Custom headers required by the GitHub API (it rejects requests without a
-# User-Agent) for every download.file() call.
+# Custom headers for every download.file() call: the GitHub API rejects
+# requests without a User-Agent, and GITHUB_PAT / GITHUB_TOKEN (when set)
+# is sent as a bearer token so authenticated requests get the higher API
+# rate limit instead of the 60/hour unauthenticated cap.
 hegelr_github_headers <- function(accept = NULL) {
   headers <- c(`User-Agent` = "hegelr (R package)")
+  token <- Sys.getenv("GITHUB_PAT")
+  if (!nzchar(token)) {
+    token <- Sys.getenv("GITHUB_TOKEN")
+  }
+  if (nzchar(token)) {
+    headers <- c(headers, c(Authorization = paste("Bearer", token)))
+  }
   if (!is.null(accept)) {
     headers <- c(headers, c(Accept = accept))
   }
@@ -409,7 +410,10 @@ hegelr_canonical_lib_name <- function(sysname = Sys.info()[["sysname"]]) {
 #'
 #' This function needs the *jsonlite* package (a soft dependency) to read
 #' the GitHub API response, and network access. The GitHub API requires a
-#' `User-Agent` header; hegel_install() sends it on every request.
+#' `User-Agent` header; hegel_install() sends it on every request. When the
+#' `GITHUB_PAT` or `GITHUB_TOKEN` environment variable is set, its value is
+#' sent as a bearer token, raising the API rate limit above the 60
+#' unauthenticated requests/hour.
 #'
 #' @param version Version to install: `"latest"` (the default) or an exact
 #'   release version such as `"0.32.5"` (with or without a leading `v`).

@@ -5,7 +5,7 @@
  * dlopen/dlsym or LoadLibraryW/GetProcAddress. Constants, opaque handle
  * types and callback/buffer types mirror hegel.h from the hegel-c crate
  * (the engine header is deliberately not included or linked; values must
- * be kept in sync with the pinned engine version, see ARCHITECTURE.md).
+ * be kept in sync with the pinned engine version).
  */
 
 #ifndef HEGELR_ABI_H

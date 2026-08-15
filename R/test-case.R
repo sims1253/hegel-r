@@ -1,4 +1,4 @@
-# The TestCase object handed to property bodies (ARCHITECTURE.md section 5).
+# The TestCase object handed to property bodies.
 # Environment-based (no R6 dependency): new_test_case(tc_extptr, report).
 
 # Build an error condition with extra classes. Conditions are plain
@@ -22,7 +22,7 @@ hegelr_preview <- function(value) {
 # Wrap a raw engine test-case handle in the environment users see as `tc`.
 # `tc_extptr` must carry attribute "context" (the owning context extptr) -
 # the shim attaches it to every non-context handle so GC can never free a
-# context before its dependents (ARCHITECTURE.md section 4). The handle and
+# context before its dependents. The handle and
 # context are re-exposed as $handle / $context for generator draw functions,
 # which call the .Call bindings directly.
 #

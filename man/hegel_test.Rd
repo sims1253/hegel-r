@@ -81,6 +81,8 @@ engine can shrink and replay.
 \item \code{tc$assume(cond)} rejects the current case when \code{cond} is not \code{TRUE}
 (the case is retried, not failed).
 \item \code{tc$note(msg)} records a message shown only in the failure report.
+\item \code{tc$target(value, label = NULL)} reports a targeting score for the
+engine's target phase, guiding generation toward larger scores.
 \item \code{stop()}, \code{stopifnot()} and testthat expectations fail the case.
 }
 

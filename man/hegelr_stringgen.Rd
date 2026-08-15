@@ -15,7 +15,7 @@ hegelr_stringgen(schema_key, builder)
 An external pointer to a \code{hegel_string_generator} handle.
 }
 \description{
-String generators are immutable and shareable (ARCHITECTURE.md section 4),
+String generators are immutable and shareable,
 so they are created once per schema and cached in \code{hegelr_env} for the
 process lifetime. \code{schema_key} is a deparse digest of the schema;
 \code{builder} is a closure \verb{function(ctx)} calling the appropriate

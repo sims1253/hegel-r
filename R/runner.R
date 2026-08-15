@@ -1,4 +1,4 @@
-# The property run loop (ARCHITECTURE.md section 5).
+# The property run loop.
 #
 # Status integers passed to C_hegelr_mark_complete (mirroring
 # hegel_status_t): VALID = 0, INVALID = 1, OVERRUN = 2, INTERESTING = 3.
@@ -142,7 +142,7 @@ hegelr_property_key <- function(property) {
 # the engine's own `./.hegel/examples/` with automatic disabling in CI; the
 # R translation redirects to a stable per-user cache dir because writing
 # into the working directory violates CRAN's policy during R CMD check
-# (documented deviation, ARCHITECTURE.md section 9). NULL passes the
+# (documented deviation). NULL passes the
 # engine default through untouched; "" (FALSE) disables; a string is a
 # path.
 hegelr_database_path <- function(database) {
@@ -196,6 +196,8 @@ hegelr_replay_case <- function(ctx, settings, blob, property) {
 #' - `tc$assume(cond)` rejects the current case when `cond` is not `TRUE`
 #'   (the case is retried, not failed).
 #' - `tc$note(msg)` records a message shown only in the failure report.
+#' - `tc$target(value, label = NULL)` reports a targeting score for the
+#'   engine's target phase, guiding generation toward larger scores.
 #' - `stop()`, `stopifnot()` and testthat expectations fail the case.
 #'
 #' Each case's outcome maps to an engine status: a body that returns
@@ -325,7 +327,7 @@ hegel_test <- function(property, test_cases = 100, seed = NULL,
 
   hegel_load()
 
-  # Handle lifetime: the ABI (ARCHITECTURE.md section 4) exposes no free
+  # Handle lifetime: the ABI exposes no free
   # wrappers - every extptr releases its engine handle through a registered
   # finalizer when GC collects it. All handles below are ordinary locals so
   # they become unreachable (and collectable, LIFO) as soon as hegel_test()
@@ -408,10 +410,13 @@ hegel_test <- function(property, test_cases = 100, seed = NULL,
         list(status = HEGELR_STATUS_INVALID, origin = "")
       },
       error = function(e) {
-        # Engine/binding errors (the shim prefixes its messages with the
-        # wrapper name) abort the run instead of becoming counterexamples,
-        # matching the Rust binding's InvalidArgument/InternalError path.
-        if (grepl("^C_hegelr_", conditionMessage(e))) {
+        # Engine/binding errors abort the run instead of becoming
+        # counterexamples, matching the Rust binding's
+        # InvalidArgument/InternalError path. The shim marks its own errors
+        # with a distinctive "hegelr shim C_hegelr_*:" message prefix; the
+        # prefix is deliberately hard to produce accidentally from a
+        # property's own stop().
+        if (grepl("^hegelr shim C_hegelr_", conditionMessage(e))) {
           stop(structure(
             list(message = conditionMessage(e)),
             class = c("hegelr_run_error", "error", "condition")

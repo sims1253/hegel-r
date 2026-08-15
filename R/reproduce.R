@@ -1,5 +1,5 @@
-# Single-case replay of a stored reproduction blob (ARCHITECTURE.md
-# section 5), the R rendering of the Rust binding's
+# Single-case replay of a stored reproduction blob, the R rendering of the
+# Rust binding's
 # #[hegel::reproduce_failure("...")]: replays the encoded choice sequence
 # once, prints the draws and notes it made, re-raises a reproduced failure,
 # and errors on a stale blob exactly like the Rust binding panics on one.

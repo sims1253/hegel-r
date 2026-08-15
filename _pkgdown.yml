@@ -3,18 +3,6 @@ url: https://sims1253.github.io/hegel-r
 template:
   bootstrap: 5
 
-# pkgdown renders every top-level .md file as a site page; ARCHITECTURE.md
-# documents the binding contract, so it gets a navbar link. AGENTS.md is
-# rendered too but left unlinked (pkgdown 2.2 has no exclude option).
-navbar:
-  structure:
-    left: [intro, reference, articles, news, architecture]
-    right: [github]
-  components:
-    architecture:
-      text: Architecture
-      href: ARCHITECTURE.html
-
 reference:
   - title: Running properties
     contents:
