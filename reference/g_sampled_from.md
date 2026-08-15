@@ -34,8 +34,8 @@ g_sampled_from(c("alpha", "beta", "gamma"))
 #>     hegelr_stop_span(tc$context, tc$handle, FALSE)
 #>     value
 #> }
-#> <bytecode: 0x5604343786c0>
-#> <environment: 0x56043437d140>
+#> <bytecode: 0x55f933f50cb8>
+#> <environment: 0x55f933f55738>
 #> 
 #> $label
 #> [1] "g_sampled_from(c(\"alpha\", \"beta\", \"gamma\"))"

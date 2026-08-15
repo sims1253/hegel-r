@@ -25,8 +25,8 @@ g_just(42)
 #> $draw
 #> function (tc) 
 #> value
-#> <bytecode: 0x560434d16d60>
-#> <environment: 0x560434d1a768>
+#> <bytecode: 0x55f9348d7460>
+#> <environment: 0x55f9348d7000>
 #> 
 #> $label
 #> [1] "g_just(42)"

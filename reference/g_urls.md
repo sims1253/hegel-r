@@ -26,8 +26,8 @@ g_urls()
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x560434755118>
-#> <environment: 0x560434754430>
+#> <bytecode: 0x55f93433de48>
+#> <environment: 0x55f93433d198>
 #> 
 #> $label
 #> [1] "g_urls()"
