@@ -35,8 +35,8 @@ g_map(g_integers(0, 9), function(x) x^2)
 #>     hegelr_stop_span(tc$context, tc$handle, FALSE)
 #>     value
 #> }
-#> <bytecode: 0x55f93420b958>
-#> <environment: 0x55f9342109e8>
+#> <bytecode: 0x56245b5e8f78>
+#> <environment: 0x56245b5e8258>
 #> 
 #> $label
 #> [1] "g_map(g_integers(min = 0, max = 9), f)"
