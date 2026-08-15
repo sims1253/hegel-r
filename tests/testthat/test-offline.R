@@ -252,6 +252,9 @@ test_that("canonical library names match the resolution pattern", {
 })
 
 test_that("GitHub headers carry a bearer token when one is set", {
+  # CI exports GITHUB_PAT/GITHUB_TOKEN; unset both so the baseline is
+  # hermetic in any environment.
+  local_envvar_(GITHUB_PAT = NA, GITHUB_TOKEN = NA)
   headers <- hegelr:::hegelr_github_headers()
   expect_false("Authorization" %in% names(headers))
   expect_identical(headers[["User-Agent"]], "hegelr (R package)")
