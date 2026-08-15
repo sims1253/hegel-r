@@ -6,7 +6,6 @@
 ^codecov\.yml$
 ^cran-comments\.md$
 ^\.Rprofile$
-^tools$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
