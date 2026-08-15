@@ -1,13 +1,8 @@
 > [!IMPORTANT]
-> We're excited you're checking out Hegel! Hegel is in beta, and we'd love for you to try it and [report any feedback](https://github.com/sims1253/hegel-r/issues).
->
-> As part of our beta, we may make breaking changes if it makes Hegel a better property-based testing library. If that instability bothers you, please check back in a few months for a stable release!
->
-> See https://hegel.dev/compatibility for more details.
+> This client is not officially supported by the Hegel core team.
+> See https://hegel.dev for more details.
 
 # Hegel for R
-
-* [Hegel website](https://hegel.dev)
 
 hegelr is a property-based testing library for R. Hegel is based on [Hypothesis](https://github.com/hypothesisworks/hypothesis), using the [Hegel protocol](https://hegel.dev/).
 
@@ -18,6 +13,13 @@ Install the development version from GitHub with:
 ```r
 # install.packages("remotes")
 remotes::install_github("sims1253/hegel-r")
+```
+
+or
+
+```r
+# install.packages("pak")
+pak::pak("sims1253/hegel-r")
 ```
 
 ### Engine setup
@@ -36,7 +38,7 @@ To use a local build instead (for example one built with cargo from a hegel-rust
 Sys.setenv(HEGEL_LIBHEGEL_PATH = "/path/to/libhegel.so")
 ```
 
-libhegel 0.32.x is required; hegelr checks the engine version on load. R 4.1.0 or newer is required, and there are no hard R package dependencies.
+libhegel 0.32.x is required; hegelr checks the engine version on load. R 4.1.0 or newer is required.
 
 ## Quickstart
 
@@ -59,7 +61,7 @@ test_that("my_sort matches the reference sort", {
 })
 ```
 
-This test will fail when run with `devtools::test()` (or under `R CMD check`)! Hegel will produce a minimal failing test case for us:
+This test will fail when run with `devtools::test()` (or under `R CMD check`). Hegel will produce a minimal failing test case for us:
 
 ```
   draw_1 <- c(0, 0)
@@ -77,17 +79,3 @@ hegel_reproduce("AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ==", function(tc) {
   stopifnot(identical(my_sort(x), sort(x)))
 })
 ```
-
-## Status
-
-hegelr is a developer preview. Supported platforms are those with a published libhegel artifact: Linux amd64/arm64, macOS arm64 (Apple Silicon), and Windows amd64/arm64.
-
-hegelr requires R 4.1.0 or newer; the only system requirement is the libhegel engine, loaded at runtime.
-
-## Contributing
-
-Issues and pull requests are welcome at [sims1253/hegel-r](https://github.com/sims1253/hegel-r). See https://hegel.dev for more about the Hegel family of property-based testing libraries.
-
-## License
-
-[MIT](LICENSE.md) © Maximilian Scholz and hegelr contributors
