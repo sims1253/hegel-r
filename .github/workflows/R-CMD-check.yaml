@@ -31,24 +31,30 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      # Since r-lib/actions v2, `needs: check` only installs packages listed
+      # under Config/Needs/check in DESCRIPTION; rcmdcheck itself must be
+      # requested via extra-packages or the check step cannot run.
+      - uses: r-lib/actions/setup-r-dependencies@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
         with:
           needs: check
+          extra-packages: any::rcmdcheck
 
       # The engine is loaded at runtime, never linked at install time, so the
       # package installs without it. Installing the package first lets the
       # next step download libhegel into hegelr's cache directory, which
-      # R CMD check then picks up.
+      # R CMD check then picks up. bash avoids PowerShell's built-in `r`
+      # alias (Invoke-History), which swallows `R CMD INSTALL` on Windows.
       - name: Install package
         run: R CMD INSTALL .
+        shell: bash
 
       # libhegel publishing may lag behind package changes, and a platform
       # may not have a published artifact at all; when this step fails, the
@@ -57,6 +63,6 @@ jobs:
         run: Rscript -e 'try(hegelr::hegel_install())'
         continue-on-error: true
 
-      - uses: r-lib/actions/check-r-package@v2
+      - uses: r-lib/actions/check-r-package@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2
         with:
           error-on: '"error"'
