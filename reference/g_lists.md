@@ -53,8 +53,8 @@ g_lists(g_logicals(), max_size = 5)
 #>     hegelr_stop_span(tc$context, tc$handle, FALSE)
 #>     out
 #> }
-#> <bytecode: 0x56096dfb2160>
-#> <environment: 0x56096dfad520>
+#> <bytecode: 0x560434952db8>
+#> <environment: 0x560434954b50>
 #> 
 #> $label
 #> [1] "g_lists(gen = g_logicals(), max_size = 5)"

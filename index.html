@@ -47,16 +47,11 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><blockquote>
-<p>[!IMPORTANT] We’re excited you’re checking out Hegel! Hegel is in beta, and we’d love for you to try it and <a href="https://github.com/sims1253/hegel-r/issues" class="external-link">report any feedback</a>.</p>
-<p>As part of our beta, we may make breaking changes if it makes Hegel a better property-based testing library. If that instability bothers you, please check back in a few months for a stable release!</p>
-<p>See <a href="https://hegel.dev/compatibility" class="external-link uri">https://hegel.dev/compatibility</a> for more details.</p>
+<p>[!IMPORTANT] This client is not officially supported by the Hegel core team. See <a href="https://hegel.dev" class="external-link uri">https://hegel.dev</a> for more details.</p>
 </blockquote>
 <div class="section level1">
 <div class="page-header"><h1 id="hegel-for-r">Hegel for R<a class="anchor" aria-label="anchor" href="#hegel-for-r"></a>
 </h1></div>
-<ul>
-<li><a href="https://hegel.dev" class="external-link">Hegel website</a></li>
-</ul>
 <p>hegelr is a property-based testing library for R. Hegel is based on <a href="https://github.com/hypothesisworks/hypothesis" class="external-link">Hypothesis</a>, using the <a href="https://hegel.dev/" class="external-link">Hegel protocol</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -65,24 +60,28 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sims1253/hegel-r"</span><span class="op">)</span></span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"sims1253/hegel-r"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="engine-setup">Engine setup<a class="anchor" aria-label="anchor" href="#engine-setup"></a>
 </h3>
 <p>hegelr drives <a href="https://github.com/hegeldev/hegel-rust" class="external-link">libhegel</a>, the native Rust engine. The engine is never linked at install time; it is loaded at runtime. Run</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">hegelr</span><span class="fu">::</span><span class="fu"><a href="reference/hegel_install.html">hegel_install</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>once to download the published engine — a single prebuilt library file (e.g. <code>libhegel-windows-amd64.dll</code>, with sha256 verification) — from the <a href="https://github.com/hegeldev/hegel-rust/releases" class="external-link">hegeldev/hegel-rust releases</a> into hegelr’s cache directory.</p>
 <p>To use a local build instead (for example one built with cargo from a hegel-rust checkout), point <code>HEGEL_LIBHEGEL_PATH</code> at the library:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>HEGEL_LIBHEGEL_PATH <span class="op">=</span> <span class="st">"/path/to/libhegel.so"</span><span class="op">)</span></span></code></pre></div>
-<p>libhegel 0.32.x is required; hegelr checks the engine version on load. R 4.1.0 or newer is required, and there are no hard R package dependencies.</p>
+<p>libhegel 0.32.x is required; hegelr checks the engine version on load. R 4.1.0 or newer is required.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="quickstart">Quickstart<a class="anchor" aria-label="anchor" href="#quickstart"></a>
 </h2>
 <p>Here’s a quick example of how to write a Hegel test:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sims1253/hegel-r" class="external-link">hegelr</a></span><span class="op">)</span></span>
 <span></span>
@@ -97,33 +96,17 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">my_sort</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p>This test will fail when run with <code>devtools::test()</code> (or under <code>R CMD check</code>)! Hegel will produce a minimal failing test case for us:</p>
+<p>This test will fail when run with <code>devtools::test()</code> (or under <code>R CMD check</code>). Hegel will produce a minimal failing test case for us:</p>
 <pre><code>  draw_1 &lt;- c(0, 0)
 Reproduce with: hegel_reproduce("AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ==", property)
 identical(my_sort(x), sort(x)) is not TRUE</code></pre>
 <p>Hegel reports the minimal example showing that our sort is incorrectly dropping duplicates. If we remove the <code>sorted[!duplicated(sorted)]</code> line from <code>my_sort()</code>, this test will then pass (because it’s just comparing the standard sort against itself).</p>
 <p>The <code>Reproduce with:</code> line replays the saved failing example without a full run: pass the blob and the property to <code><a href="reference/hegel_reproduce.html">hegel_reproduce()</a></code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/hegel_reproduce.html">hegel_reproduce</a></span><span class="op">(</span><span class="st">"AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ=="</span>, <span class="kw">function</span><span class="op">(</span><span class="va">tc</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">tc</span><span class="op">$</span><span class="fu">draw</span><span class="op">(</span><span class="fu"><a href="reference/g_vectors.html">g_vectors</a></span><span class="op">(</span><span class="fu"><a href="reference/g_integers.html">g_integers</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu">my_sort</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="status">Status<a class="anchor" aria-label="anchor" href="#status"></a>
-</h2>
-<p>hegelr is a developer preview. Supported platforms are those with a published libhegel artifact: Linux amd64/arm64, macOS arm64 (Apple Silicon), and Windows amd64/arm64.</p>
-<p>hegelr requires R 4.1.0 or newer; the only system requirement is the libhegel engine, loaded at runtime.</p>
-</div>
-<div class="section level2">
-<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
-</h2>
-<p>Issues and pull requests are welcome at <a href="https://github.com/sims1253/hegel-r" class="external-link">sims1253/hegel-r</a>. See <a href="https://hegel.dev" class="external-link uri">https://hegel.dev</a> for more about the Hegel family of property-based testing libraries.</p>
-</div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
-</h2>
-<p><a href="LICENSE.html">MIT</a> © Maximilian Scholz and hegelr contributors</p>
 </div>
 </div>
 

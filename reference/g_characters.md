@@ -74,8 +74,8 @@ g_characters(categories = c("Lu", "Ll"))
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x56097064b678>
-#> <environment: 0x56097064da68>
+#> <bytecode: 0x560435283d98>
+#> <environment: 0x5604352861f8>
 #> 
 #> $label
 #> [1] "g_characters()"
