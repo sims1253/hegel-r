@@ -1,6 +1,8 @@
-# Online tests for the hegel_test() runner: passing properties, failing
-# properties (shrinking and the failure report), assumptions, testthat
-# expectation failures, and derandomized determinism.
+# Tests for R/runner.R — the hegel_test() run loop: passing properties,
+# failing properties (shrinking and the failure report), assumptions,
+# testthat expectation failures, and derandomized determinism. The run-loop
+# tests need the engine (skip_if_no_libhegel()); the settings-argument
+# validation tests at the end run offline.
 
 test_that("a passing property returns invisible TRUE", {
   skip_if_no_libhegel()
@@ -148,4 +150,42 @@ test_that("verbosity = 2 emits per-case draws and verbosity = 0 quiets reports",
   # Quiet: no draw lines, no reproduce hint - just the failing call site.
   expect_false(grepl("draw_1", conditionMessage(failure)))
   expect_false(grepl("Reproduce with", conditionMessage(failure)))
+})
+
+test_that("phase and health-check names map to engine bitmasks", {
+  expect_null(hegelr:::hegelr_phase_mask(NULL))
+  expect_identical(hegelr:::hegelr_phase_mask("shrink"), 16)
+  # OR of the unique bits, order- and duplicate-insensitive.
+  expect_identical(
+    hegelr:::hegelr_phase_mask(c("reuse", "generate")),
+    hegelr:::hegelr_phase_mask(c("generate", "reuse", "reuse"))
+  )
+  expect_identical(
+    hegelr:::hegelr_phase_mask(names(hegelr:::HEGELR_PHASES)),
+    31
+  )
+  expect_error(hegelr:::hegelr_phase_mask("bogus"), "unknown phase")
+  expect_error(hegelr:::hegelr_phase_mask(1), "phase names")
+
+  expect_null(hegelr:::hegelr_health_check_mask(NULL))
+  expect_identical(hegelr:::hegelr_health_check_mask("too_slow"), 2)
+  expect_identical(
+    hegelr:::hegelr_health_check_mask(names(hegelr:::HEGELR_HEALTH_CHECKS)),
+    15
+  )
+  expect_error(hegelr:::hegelr_health_check_mask("nope"), "unknown health-check")
+})
+
+test_that("hegel_test validates new parity arguments before engine load", {
+  prop <- function(tc) TRUE
+  expect_error(hegel_test(prop, phases = "bogus"), "unknown phase")
+  expect_error(hegel_test(prop, suppress_health_checks = "bogus"),
+    "unknown health-check"
+  )
+  expect_error(hegel_test(prop, single_test_case = "yes"),
+    "single_test_case"
+  )
+  expect_error(hegel_test(prop, report_multiple_failures = NA),
+    "report_multiple_failures"
+  )
 })

@@ -48,3 +48,19 @@ local_envvar_ <- function(...) {
   )
   invisible(new)
 }
+
+# Draw n values from a generator by running a single passing test case whose
+# body draws n times.
+draw_values <- function(gen, n = 50L) {
+  out <- vector("list", n)
+  hegel_test(
+    function(tc) {
+      for (i in seq_len(n)) {
+        out[[i]] <<- tc$draw(gen)
+      }
+    },
+    test_cases = 1L,
+    database = FALSE
+  )
+  out
+}

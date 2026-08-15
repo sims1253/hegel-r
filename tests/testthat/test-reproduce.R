@@ -1,6 +1,10 @@
-# Online tests for hegel_reproduce(): extract the replay blob from a failure
-# report, replay it against the property, and check that garbage blobs
-# produce clear errors.
+# Tests for R/reproduce.R — replay of stored counterexample blobs. The
+# argument-validation test runs offline; the replay tests need the engine.
+
+test_that("hegel_reproduce() requires both blob and property", {
+  expect_error(hegel_reproduce(), "blob|argument")
+  expect_error(hegel_reproduce("x"), "property|argument")
+})
 
 test_that("a failure blob can be replayed with hegel_reproduce()", {
   skip_if_no_libhegel()
