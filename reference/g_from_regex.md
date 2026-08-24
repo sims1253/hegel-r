@@ -38,8 +38,8 @@ g_from_regex("[a-z]{3,8}")
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x56245bf8a6f8>
-#> <environment: 0x56245bf8c4c8>
+#> <bytecode: 0x559a576e8488>
+#> <environment: 0x559a576eab50>
 #> 
 #> $label
 #> [1] "g_from_regex(\"[a-z]{3,8}\")"

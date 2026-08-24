@@ -23,5 +23,5 @@ if (hegel_library_available()) {
 } else {
   cat("engine absent; run hegel_install() to fetch it\n")
 }
-#> engine ready, version 0.32.5 
+#> engine absent; run hegel_install() to fetch it
 ```

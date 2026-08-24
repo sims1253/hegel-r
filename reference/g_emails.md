@@ -27,8 +27,8 @@ g_emails()
 #>     hegelr_stop_for_status(hegelr_generate_string(tc$context, 
 #>         sg, tc$handle))
 #> }
-#> <bytecode: 0x56245c6a7298>
-#> <environment: 0x56245c6a6428>
+#> <bytecode: 0x559a57e0d098>
+#> <environment: 0x559a57e0fe98>
 #> 
 #> $label
 #> [1] "g_emails()"

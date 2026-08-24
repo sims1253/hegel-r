@@ -162,7 +162,4 @@ if (hegel_library_available()) {
     error = function(e) cat("caught:", conditionMessage(e), "\n")
   )
 }
-#> caught:   draw_1 <- c(0, 0)
-#> Reproduce with: hegel_reproduce("AXicY2VgYGBkZOBiZEBhMAAAAd8AIQ==", property)
-#> my_sort() does not match base::sort() 
 ```

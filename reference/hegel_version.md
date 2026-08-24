@@ -20,5 +20,4 @@ A character string, e.g. `"0.32.5"`.
 if (hegel_library_available()) {
   hegel_version()
 }
-#> [1] "0.32.5"
 ```

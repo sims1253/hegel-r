@@ -69,6 +69,5 @@ if (hegel_library_available()) {
     )
   }
 }
-#> still failing
 # }
 ```

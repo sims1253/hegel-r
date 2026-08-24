@@ -41,5 +41,5 @@ the OS loader).
 
 ``` r
 cat("libhegel resolves to:", hegel_library_path(), "\n")
-#> libhegel resolves to: /home/runner/.cache/R/hegelr/libhegel/0.32.5/libhegel.so 
+#> libhegel resolves to: /home/runner/.cache/R/hegelr/libhegel/0.33.0/libhegel.so 
 ```
