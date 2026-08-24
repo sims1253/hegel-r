@@ -1,7 +1,7 @@
 > [!IMPORTANT]
 > This client is not officially supported by the Hegel core team.
 > See https://hegel.dev for more details.
-> At of now, most of the project has been written by GLM 5.2
+> As of now, most of the project has been written by GLM 5.2
 
 # Hegel for R
 
