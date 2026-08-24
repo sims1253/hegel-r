@@ -1,7 +1,7 @@
 # Hegel for R
 
 > \[!IMPORTANT\] This client is not officially supported by the Hegel
-> core team. See <https://hegel.dev> for more details. At of now, most
+> core team. See <https://hegel.dev> for more details. As of now, most
 > of the project has been written by GLM 5.2
 
 hegelr is a property-based testing library for R. Hegel is based on

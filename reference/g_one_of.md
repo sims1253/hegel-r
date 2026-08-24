@@ -34,8 +34,8 @@ g_one_of(g_integers(), g_text(max_size = 3))
 #>     hegelr_stop_span(tc$context, tc$handle, FALSE)
 #>     value
 #> }
-#> <bytecode: 0x559a56ba14b8>
-#> <environment: 0x559a56ba3b80>
+#> <bytecode: 0x55aa960fcea8>
+#> <environment: 0x55aa960ff570>
 #> 
 #> $label
 #> [1] "g_one_of(g_integers(), g_text(min_size = 0, max_size = 3))"
